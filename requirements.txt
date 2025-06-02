@@ -1,2 +1,3 @@
 statsmodels
 langchain
+langchain_community
