@@ -9,7 +9,7 @@ import datetime
 import os
 
 # --- Set Groq API credentials ---
-groq_api_key = SECRET_GROQ
+groq_api_key = st.secrets["SECRET_GROQ"]
 groq_api_base = "https://api.groq.com/openai/v1"
 model_name = "llama3-70b-8192"
 
