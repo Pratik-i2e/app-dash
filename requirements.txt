@@ -2,5 +2,5 @@ statsmodels
 langchain
 langchain_community
 openai
-crewai
-sqlite3
+crewai==0.121.1
+rich==13.9.4
