@@ -3,4 +3,4 @@ langchain
 langchain_community
 openai
 crewai
-sqlite3 >= 3.35.0
+sqlite3
