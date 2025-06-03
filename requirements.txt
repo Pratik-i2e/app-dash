@@ -2,3 +2,4 @@ statsmodels
 langchain
 langchain_community
 openai
+crewai
