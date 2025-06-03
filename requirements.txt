@@ -4,3 +4,4 @@ langchain_community
 openai
 crewai==0.121.1
 rich==13.9.4
+sqlite3==3.40 
