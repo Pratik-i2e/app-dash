@@ -170,9 +170,7 @@ st.set_page_config(page_title="📊 Financial & FTE Analyzer", layout="wide")
 st.title("📈 Project Financial Forecast & FTE Summary")
 
 # Upload files
-fte_file = pd.read_csv("AUTOMATION DATA(FTE Data) (1).csv")
-finance_df = pd.read_csv("AUTOMATION DATA(Finance Data) (1).csv")
-commitment_df = pd.read_csv("AUTOMATION DATA(Commitment) (1).csv")
+fte_file = 1
 
 # Helper function for CrewAI summary
 def generate_summary_with_crewai(csv_str, project_names):
