@@ -265,6 +265,17 @@ if fte_file:
     finance_df = pd.read_csv("AUTOMATION DATA(Finance Data) (1).csv")
     commitment_df = pd.read_csv("AUTOMATION DATA(Commitment) (1).csv")
 
+    fte_df['DATE'] = pd.to_datetime(fte_df['YEARMONTH'].astype(str) + '01', format='%Y%m%d')
+    finance_df['DATE'] = pd.to_datetime(finance_df['GL_INVOICE_MONTHYEAR'].astype(str) + '01', format='%Y%m%d')
+    fte_df['Year'] = fte_df['DATE'].dt.year
+    fte_df['Quarter'] = fte_df['DATE'].dt.quarter
+    finance_df['Year'] = finance_df['DATE'].dt.year
+    finance_df['Quarter'] = finance_df['DATE'].dt.quarter
+    
+    fte_df['FTE_RATE'] = pd.to_numeric(fte_df['FTE_RATE'], errors='coerce').fillna(0)
+    fte_df['FTE'] = pd.to_numeric(fte_df['FTE'], errors='coerce').fillna(0)
+    fte_df['fte_cost'] = fte_df['FTE'] * fte_df['FTE_RATE']
+    finance_df['GL_TRANS_AMOUNT'] = pd.to_numeric(finance_df['GL_TRANS_AMOUNT'], errors='coerce').fillna(0)
     # Combine key data from all sources (simplified example)
     fte_agg = fte_df.groupby(['PROJECT_NAME', 'Year', 'Quarter']).agg({
         'FTE Count': 'sum',
