@@ -545,13 +545,13 @@ Improve formatting, remove redundancy, and verify clarity of risks and metrics.
     table = crew_table.kickoff()
     crew = Crew(agents=[analyst_agent, insight_agent, qa_agent], tasks=[task1, task2, task3], verbose=True)
     result = crew.kickoff()
-    return result
+    return result, table
 
 # Trigger pipeline
 if generate:
     with st.spinner("Generating insights..."):
         comparison_data = forecast_pipeline(selected_project)
-        final_summary = generate_report(comparison_data)
+        final_summary, table = generate_report(comparison_data)
         st.subheader("📌 Final Summary")
         st.markdown(table)
         st.markdown(final_summary)
