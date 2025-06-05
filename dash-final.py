@@ -430,7 +430,12 @@ def forecast_pipeline(project_name):
 # Agent-based report generation
 def generate_report(df):
     csv_str = df.to_csv(index=False)
-
+    table_agent = Agent(
+        role="Comparison Table Generator",
+        goal="Generate a clean markdown table of financial and FTE metrics across quarters",
+        backstory="Expert in financial summarization and markdown formatting",
+        llm="groq/llama-3.3-70b-versatile"
+    )
     analyst_agent = Agent(
         role="Financial Analyst",
         goal="Compare quarterly financial and FTE data between 2024 and 2025",
@@ -451,7 +456,27 @@ def generate_report(df):
         backstory="A sharp editor and analyst who ensures quality, clarity, and correctness in reports",
         llm="groq/llama-3.3-70b-versatile"
     )
-
+    table_task = Task(
+        description=f"""
+    Generate a markdown table comparing financial and workforce metrics between 2024 and 2025 for each quarter.
+    
+    Table Format:
+    | Metric         | Q1_2024 | Q1_2025 | Q2_2024 | Q2_2025 | Q3_2024 | Q3_2025 | Q4_2024 | Q4_2025 |
+    |----------------|---------|---------|---------|---------|---------|---------|---------|---------|
+    | Total Spend    |         |         |         |         |         |         |         |         |
+    | Total FTE      |         |         |         |         |         |         |         |         |
+    | FTE Cost       |         |         |         |         |         |         |         |         |
+    | Invoice Count  |         |         |         |         |         |         |         |         |
+    
+    Use only the CSV data below, include * or italics for forecasted values, and round appropriately.
+    
+    CSV:
+    {csv_str}
+    """,
+        agent=table_agent,
+        expected_output="A clean Markdown table comparing 2024 and 2025 quarters by key metrics.",
+        input=csv_str
+    )
     task1 = Task(
         description=f"""
 You are analyzing a CSV of quarterly project data (filtered and cleaned below).
@@ -512,8 +537,13 @@ Improve formatting, remove redundancy, and verify clarity of risks and metrics.
         expected_output="A finalized version of the insight report that is QA-approved for executives to consume..",
         input=task2.output
     )
-
-    crew = Crew(agents=[analyst_agent, insight_agent, qa_agent], tasks=[task1, task2, task3])
+    crew_table = Crew(
+        agents=[table_agent],
+        tasks=[table_task],
+        verbose=True
+    )
+    table = crew_table.kickoff()
+    crew = Crew(agents=[analyst_agent, insight_agent, qa_agent], tasks=[task1, task2, task3], verbose=True)
     result = crew.kickoff()
     return result
 
@@ -523,4 +553,5 @@ if generate:
         comparison_data = forecast_pipeline(selected_project)
         final_summary = generate_report(comparison_data)
         st.subheader("📌 Final Summary")
+        st.markdown(table)
         st.markdown(final_summary)
