@@ -563,7 +563,7 @@ if generate:
         comparison_data = forecast_pipeline(selected_project)
         final_summary, table = generate_report(comparison_data)
         st.subheader("📌 Final Summary")
-        df = markdown_to_df(table)
+        df = markdown_to_df(str(table))
         html_table = """
 <style>
     table {
