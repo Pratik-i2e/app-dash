@@ -547,11 +547,71 @@ Improve formatting, remove redundancy, and verify clarity of risks and metrics.
     result = crew.kickoff()
     return result, table
 
+def markdown_to_df(markdown_str):
+    df = pd.read_csv(StringIO('\n'.join([line.strip() for line in markdown_str.strip().split('\n') if '|' in line])), sep='|')
+    df = df.drop(columns=[col for col in df.columns if 'Unnamed' in col or col.strip() == ''])
+    df.columns = df.columns.str.strip()
+    df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+    return df
+
+
+
 # Trigger pipeline
 if generate:
     with st.spinner("Generating insights..."):
         comparison_data = forecast_pipeline(selected_project)
         final_summary, table = generate_report(comparison_data)
         st.subheader("📌 Final Summary")
-        st.markdown(table)
+        df = markdown_to_df(markdown_table)
+        html_table = """
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid #888;
+        padding: 8px;
+        text-align: center;
+    }
+    th {
+        background-color: #222;
+        color: white;
+    }
+</style>
+
+<table>
+    <tr>
+        <th rowspan="2">Metric</th>
+        <th colspan="2">Q1</th>
+        <th colspan="2">Q2</th>
+        <th colspan="2">Q3</th>
+        <th colspan="2">Q4</th>
+    </tr>
+    <tr>
+        <th>2024</th><th>2025</th>
+        <th>2024</th><th>2025</th>
+        <th>2024</th><th>2025</th>
+        <th>2024</th><th>2025</th>
+    </tr>
+        """
+        
+        # Add data rows
+        for _, row in df.iterrows():
+            html_table += f"""
+            <tr>
+                <td>{row['Metric']}</td>
+                <td>{row['Q1_2024']}</td><td>{row['Q1_2025']}</td>
+                <td>{row['Q2_2024']}</td><td>{row['Q2_2025']}</td>
+                <td>{row['Q3_2024']}</td><td>{row['Q3_2025']}</td>
+                <td>{row['Q4_2024']}</td><td>{row['Q4_2025']}</td>
+            </tr>
+            """
+        
+        html_table += "</table>"
+        
+        # --- Step 4: Display in Streamlit ---
+        # st.markdown("## 📊 Quarterly Metrics Table with Merged Headers")
+        html(html_table, height=400, scrolling=True)
+        # st.markdown(table)
         st.markdown(final_summary)
