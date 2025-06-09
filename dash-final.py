@@ -319,6 +319,7 @@ import os
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from crewai import Agent, Task, Crew
 from io import StringIO
+from streamlit.components.v1 import html
 
 # Set API key for Groq
 os.environ["GROQ_API_KEY"] = st.secrets["SECRET_GROQ"]
