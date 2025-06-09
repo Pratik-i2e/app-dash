@@ -550,10 +550,13 @@ Improve formatting, remove redundancy, and verify clarity of risks and metrics.
     return result, table
 
 def markdown_to_df(markdown_str):
-    df = pd.read_csv(StringIO('\n'.join([line.strip() for line in markdown_str.strip().split('\n') if '|' in line])), sep='|')
+    lines = markdown_str.strip().split('\n')
+    # Filter out the line with only '---'
+    clean_lines = [line for line in lines if not set(line.strip()) <= set('|- ')]
+    df = pd.read_csv(StringIO('\n'.join(clean_lines)), sep='|')
     df = df.drop(columns=[col for col in df.columns if 'Unnamed' in col or col.strip() == ''])
     df.columns = df.columns.str.strip()
-    df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+    df = df.applymap(lambda x: str(x).strip().replace('*', '') if isinstance(x, str) else x)
     return df
 
 
@@ -570,15 +573,19 @@ if generate:
     table {
         border-collapse: collapse;
         width: 100%;
+        font-size: 15px;
     }
     th, td {
         border: 1px solid #888;
         padding: 8px;
         text-align: center;
+        color: white;
     }
     th {
-        background-color: #222;
-        color: white;
+        background-color: #333;
+    }
+    td {
+        background-color: #111;
     }
 </style>
 
@@ -596,9 +603,9 @@ if generate:
         <th>2024</th><th>2025</th>
         <th>2024</th><th>2025</th>
     </tr>
-        """
-        
-        # Add data rows
+"""
+
+        # Populate table rows
         for _, row in df.iterrows():
             html_table += f"""
             <tr>
@@ -608,8 +615,7 @@ if generate:
                 <td>{row['Q3_2024']}</td><td>{row['Q3_2025']}</td>
                 <td>{row['Q4_2024']}</td><td>{row['Q4_2025']}</td>
             </tr>
-            """
-        
+            """        
         html_table += "</table>"
         
         # --- Step 4: Display in Streamlit ---
