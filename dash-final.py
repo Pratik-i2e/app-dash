@@ -655,6 +655,6 @@ if generate:
         render_quarterly_table(df)
         # --- Step 4: Display in Streamlit ---
         # st.markdown("## 📊 Quarterly Metrics Table with Merged Headers")
-        html(html_table, height=400, scrolling=True)
+        # html(html_table, height=400, scrolling=True)
         # st.markdown(table)
         st.markdown(final_summary)
