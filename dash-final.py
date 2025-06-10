@@ -642,7 +642,7 @@ if generate:
         for _, row in df.iterrows():
             html_table += f"""
             <tr>
-                <td>{row['metrics']}</td>
+                <td>{row['index']}</td>
                 <td>{row['Q1_2024']}</td><td>{row['Q1_2025']}</td>
                 <td>{row['Q2_2024']}</td><td>{row['Q2_2025']}</td>
                 <td>{row['Q3_2024']}</td><td>{row['Q3_2025']}</td>
