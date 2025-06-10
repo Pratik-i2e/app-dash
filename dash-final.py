@@ -460,7 +460,7 @@ def forecast_pipeline(project_name):
     )
     
     comparison_df = combined_df[combined_df['Year'].isin([2024, compare_year])]
-    return comparison_df
+    return comparison_df, compare_data_df
 
 # Agent-based report generation
 def generate_report(df):
