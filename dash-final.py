@@ -639,10 +639,10 @@ if generate:
 """
 
         # Populate table rows
-        for _, row in df.iterrows():
+        for _, row, index in df.iterrows():
             html_table += f"""
             <tr>
-                <td>{row['index']}</td>
+                <td>{index}</td>
                 <td>{row['Q1_2024']}</td><td>{row['Q1_2025']}</td>
                 <td>{row['Q2_2024']}</td><td>{row['Q2_2025']}</td>
                 <td>{row['Q3_2024']}</td><td>{row['Q3_2025']}</td>
