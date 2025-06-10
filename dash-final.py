@@ -426,6 +426,39 @@ def forecast_pipeline(project_name):
         "Normal"
     ), axis=1)
 
+    def build_side_by_side_table(df, metric):
+        pivot = df[df['Year'].isin([2024, 2025])]
+        pivot = pivot.pivot_table(
+            index='Quarter',
+            columns='Year',
+            values=metric,
+            aggfunc='sum',
+            fill_value=0
+        ).reindex([1, 2, 3, 4])
+        table = []
+    
+        for q in [1, 2, 3, 4]:
+            val_2024 = pivot.loc[q, 2024] if 2024 in pivot.columns else 0
+            val_2025 = pivot.loc[q, 2025] if 2025 in pivot.columns else 0
+            table.extend([round(val_2024, 2), round(val_2025, 2)])
+    
+        return table
+
+    metrics = ['total_spend', 'total_fte', 'fte_cost', 'invoice_count']
+    rows = []
+    for metric in metrics:
+        row = build_side_by_side_table(combined_df, metric)
+        rows.append(row)
+    
+    compare_data_df = pd.DataFrame(
+        rows,
+        index=['Total Spend', 'Total FTE', 'FTE Cost', 'Invoice Count'],
+        columns=[
+            'Q1_2024', 'Q1_2025', 'Q2_2024', 'Q2_2025',
+            'Q3_2024', 'Q3_2025', 'Q4_2024', 'Q4_2025'
+        ]
+    )
+    
     comparison_df = combined_df[combined_df['Year'].isin([2024, compare_year])]
     return comparison_df
 
@@ -539,15 +572,15 @@ Improve formatting, remove redundancy, and verify clarity of risks and metrics.
         expected_output="A finalized version of the insight report that is QA-approved for executives to consume..",
         input=task2.output
     )
-    crew_table = Crew(
-        agents=[table_agent],
-        tasks=[table_task],
-        verbose=True
-    )
-    table = crew_table.kickoff()
+    # crew_table = Crew(
+    #     agents=[table_agent],
+    #     tasks=[table_task],
+    #     verbose=True
+    # )
+    # table = crew_table.kickoff()
     crew = Crew(agents=[analyst_agent, insight_agent, qa_agent], tasks=[task1, task2, task3], verbose=True)
     result = crew.kickoff()
-    return result, table
+    return result
 
 def markdown_to_df(markdown_str):
     lines = markdown_str.strip().split('\n')
@@ -564,10 +597,10 @@ def markdown_to_df(markdown_str):
 # Trigger pipeline
 if generate:
     with st.spinner("Generating insights..."):
-        comparison_data = forecast_pipeline(selected_project)
+        comparison_data, df = forecast_pipeline(selected_project)
         final_summary, table = generate_report(comparison_data)
         st.subheader("📌 Final Summary")
-        df = markdown_to_df(str(table))
+        # df = markdown_to_df(str(table))
         html_table = """
 <style>
     table {
