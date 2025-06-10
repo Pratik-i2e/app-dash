@@ -598,7 +598,7 @@ def markdown_to_df(markdown_str):
 if generate:
     with st.spinner("Generating insights..."):
         comparison_data, df = forecast_pipeline(selected_project)
-        final_summary, table = generate_report(comparison_data)
+        final_summary = generate_report(comparison_data)
         st.subheader("📌 Final Summary")
         # df = markdown_to_df(str(table))
         html_table = """
