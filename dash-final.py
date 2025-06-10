@@ -592,6 +592,57 @@ def markdown_to_df(markdown_str):
     df = df.applymap(lambda x: str(x).strip().replace('*', '') if isinstance(x, str) else x)
     return df
 
+def render_quarterly_table(df):
+    # Start HTML
+    html_table = """
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 15px;
+        }
+        th, td {
+            border: 1px solid #888;
+            padding: 8px;
+            text-align: center;
+            color: white;
+        }
+        th {
+            background-color: #333;
+        }
+        td {
+            background-color: #111;
+        }
+    </style>
+
+    <table>
+        <tr>
+            <th rowspan="2">Metric</th>
+            <th colspan="2">Q1</th>
+            <th colspan="2">Q2</th>
+            <th colspan="2">Q3</th>
+            <th colspan="2">Q4</th>
+        </tr>
+        <tr>
+            <th>2024</th><th>2025</th>
+            <th>2024</th><th>2025</th>
+            <th>2024</th><th>2025</th>
+            <th>2024</th><th>2025</th>
+        </tr>
+    """
+
+    # Add rows from DataFrame
+    for idx, row in df.iterrows():
+        html_table += f"<tr><td>{idx}</td>"
+        for val in row:
+            clean_val = str(val).replace('*', '')  # Remove markdown asterisks if any
+            html_table += f"<td>{clean_val}</td>"
+        html_table += "</tr>"
+
+    html_table += "</table>"
+
+    # Render in Streamlit
+    html(html_table, height=500, scrolling=True)
 
 
 # Trigger pipeline
@@ -601,56 +652,7 @@ if generate:
         final_summary = generate_report(comparison_data)
         st.subheader("📌 Final Summary")
         # df = markdown_to_df(str(table))
-        html_table = """
-<style>
-    table {
-        border-collapse: collapse;
-        width: 100%;
-        font-size: 15px;
-    }
-    th, td {
-        border: 1px solid #888;
-        padding: 8px;
-        text-align: center;
-        color: white;
-    }
-    th {
-        background-color: #333;
-    }
-    td {
-        background-color: #111;
-    }
-</style>
-
-<table>
-    <tr>
-        <th rowspan="2">Metric</th>
-        <th colspan="2">Q1</th>
-        <th colspan="2">Q2</th>
-        <th colspan="2">Q3</th>
-        <th colspan="2">Q4</th>
-    </tr>
-    <tr>
-        <th>2024</th><th>2025</th>
-        <th>2024</th><th>2025</th>
-        <th>2024</th><th>2025</th>
-        <th>2024</th><th>2025</th>
-    </tr>
-"""
-
-        # Populate table rows
-        for _, row, index in df.iterrows():
-            html_table += f"""
-            <tr>
-                <td>{index}</td>
-                <td>{row['Q1_2024']}</td><td>{row['Q1_2025']}</td>
-                <td>{row['Q2_2024']}</td><td>{row['Q2_2025']}</td>
-                <td>{row['Q3_2024']}</td><td>{row['Q3_2025']}</td>
-                <td>{row['Q4_2024']}</td><td>{row['Q4_2025']}</td>
-            </tr>
-            """        
-        html_table += "</table>"
-        
+        render_quarterly_table(df)
         # --- Step 4: Display in Streamlit ---
         # st.markdown("## 📊 Quarterly Metrics Table with Merged Headers")
         html(html_table, height=400, scrolling=True)
