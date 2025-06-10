@@ -460,7 +460,7 @@ def generate_report(df):
     )
     table_task = Task(
         description=f"""
-    Generate a markdown table comparing financial and workforce metrics between 2024 and 2025 for each quarter.
+    Generate a markdown table comparing financial and workforce metrics between 2024 and 2025 for each quarter. Use sum as aggregate function.
     
     Table Format:
     | Metric         | Q1_2024 | Q1_2025 | Q2_2024 | Q2_2025 | Q3_2024 | Q3_2025 | Q4_2024 | Q4_2025 |
