@@ -400,9 +400,18 @@ def forecast_pipeline(project_name):
         for project in df['PROJECT_NAME'].unique():
             group = df[df['PROJECT_NAME'] == project].sort_values(['Year', 'Quarter'])
             group['Period'] = group['Year'].astype(str) + 'Q' + group['Quarter'].astype(str)
+            # Get periods already available in 2025
+            existing_2025_quarters = group[group['Year'] == 2025]['Quarter'].tolist()
+            forecast_quarters = [q for q in range(1, 5) if q not in existing_2025_quarters]
+    
+            # Skip if all quarters are already present
+            if not forecast_quarters:
+                continue
+            steps = len(forecast_quarters)
+            
             for metric in metrics:
                 ts = group.set_index('Period')[metric].dropna()
-                forecast = sarima_forecast(ts, 4)
+                forecast = sarima_forecast(ts, steps)
                 for i, val in enumerate(forecast):
                     forecast_rows.append({'PROJECT_NAME': project, 'Year': 2025, 'Quarter': i+1, metric: val})
         return pd.DataFrame(forecast_rows).pivot_table(index=['PROJECT_NAME', 'Year', 'Quarter'], values=metrics, aggfunc='sum').reset_index()
@@ -463,7 +472,7 @@ def forecast_pipeline(project_name):
     return comparison_df, compare_data_df
 
 # Agent-based report generation
-def generate_report(df):
+def generate_report(df, compare_data_df):
     csv_str = df.to_csv(index=False)
     table_agent = Agent(
         role="Comparison Table Generator",
@@ -532,6 +541,7 @@ For each quarter:
 
 🔒 Use only these project names: {selected_project}
 
+And also the data for every quarter is {compare_data_df}
 Structure your report like:
 Quarter: Q1 Comparison
 - ProjectName1: analysis...
@@ -649,7 +659,7 @@ def render_quarterly_table(df):
 if generate:
     with st.spinner("Generating insights..."):
         comparison_data, df = forecast_pipeline(selected_project)
-        final_summary = generate_report(comparison_data)
+        final_summary = generate_report(comparison_data, df)
         st.subheader("📌 Final Summary")
         # df = markdown_to_df(str(table))
         render_quarterly_table(df)
