@@ -663,7 +663,9 @@ if generate:
         final_summary = generate_report(comparison_data, df)
         st.subheader("📌 Forecasted Data")
         # Optional Visualization
-        st.line_chart(comparison_data.pivot(index=['Year','Quarter'], columns='is_forecast', values=['total_spend', 'total_fte', 'fte_cost', 'invoice_count']))
+        forecasted_df = comparison_df[comparison_df['is_forecast'] == True]
+        st.dataframe(forecasted_df)
+
         st.subheader("📌 Final Summary")
         # df = markdown_to_df(str(table))
         render_quarterly_table(df)
