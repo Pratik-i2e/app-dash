@@ -577,7 +577,7 @@ Check that each quarter (Q1–Q4) comparison is clear and separated.
 Ensure each project is discussed in its respective quarter.
 Verify the mention of whether 2025 data is actual or forecasted.
 Improve formatting, remove redundancy, and verify clarity of risks and metrics.
-Do not use Italics text.
+Make sure to avoid italic formatting in the response.
 """,
         agent=qa_agent,
         expected_output="A finalized version of the insight report that is QA-approved for executives to consume..",
@@ -673,5 +673,5 @@ if generate:
         # st.markdown("## 📊 Quarterly Metrics Table with Merged Headers")
         # html(html_table, height=400, scrolling=True)
         # st.markdown(table)
-        final_summary = final_summary.replace("*", " *").replace(",", ", ")
+        
         st.markdown(final_summary)
