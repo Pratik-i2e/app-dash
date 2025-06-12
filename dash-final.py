@@ -327,9 +327,9 @@ os.environ["GROQ_API_KEY"] = st.secrets["SECRET_GROQ"]
 # Load data from current working directory
 @st.cache_data
 def load_data():
-    finance_df = pd.read_csv("AUTOMATION DATA(Finance Data) (1).csv")
-    commitment_df = pd.read_csv("AUTOMATION DATA(Commitment) (1).csv")
-    fte_df = pd.read_csv("AUTOMATION DATA(FTE Data) (1).csv")
+    finance_df = pd.read_csv("AUTOMATION DATA-(Finance Data).csv")
+    commitment_df = pd.read_csv("AUTOMATION DATA-(Commitment).csv")
+    fte_df = pd.read_csv("AUTOMATION DATA-(FTE Data).csv")
     
     # Date handling
     fte_df['DATE'] = pd.to_datetime(fte_df['YEARMONTH'].astype(str) + '01', format='%Y%m%d')
