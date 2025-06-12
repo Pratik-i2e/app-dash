@@ -577,6 +577,7 @@ Check that each quarter (Q1–Q4) comparison is clear and separated.
 Ensure each project is discussed in its respective quarter.
 Verify the mention of whether 2025 data is actual or forecasted.
 Improve formatting, remove redundancy, and verify clarity of risks and metrics.
+Do not use Italics text.
 """,
         agent=qa_agent,
         expected_output="A finalized version of the insight report that is QA-approved for executives to consume..",
@@ -660,6 +661,9 @@ if generate:
     with st.spinner("Generating insights..."):
         comparison_data, df = forecast_pipeline(selected_project)
         final_summary = generate_report(comparison_data, df)
+        st.subheader("📌 Forecasted Data")
+        # Optional Visualization
+        st.line_chart(comparison_data.pivot(index=['Year','Quarter'], columns='is_forecast', values=['total_spend', 'total_fte', 'fte_cost', 'invoice_count']))
         st.subheader("📌 Final Summary")
         # df = markdown_to_df(str(table))
         render_quarterly_table(df)
