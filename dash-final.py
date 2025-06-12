@@ -663,7 +663,7 @@ if generate:
         final_summary = generate_report(comparison_data, df)
         st.subheader("📌 Forecasted Data")
         # Optional Visualization
-        forecasted_df = comparison_df[comparison_df['is_forecast'] == True]
+        forecasted_df = comparison_data[comparison_data['is_forecast'] == True]
         st.dataframe(forecasted_df)
 
         st.subheader("📌 Final Summary")
