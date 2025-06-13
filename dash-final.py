@@ -676,5 +676,5 @@ if generate:
         # st.markdown("## 📊 Quarterly Metrics Table with Merged Headers")
         # html(html_table, height=400, scrolling=True)
         # st.markdown(table)
-        final_summary = str(final_summary).replace('$', '\\$')
-        st.markdown(final_summary)
+        final_summary = str(final_summary).replace('$', '&#36;')
+        st.markdown(final_summary, unsafe_allow_html=True)
