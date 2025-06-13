@@ -469,7 +469,7 @@ def forecast_pipeline(project_name):
     )
     
     comparison_df = combined_df[combined_df['Year'].isin([2024, compare_year])]
-    return comparison_df, compare_data_df
+    return comparison_df, compare_data_df, forecast_df
 
 # Agent-based report generation
 def generate_report(df, compare_data_df):
@@ -662,12 +662,12 @@ def render_quarterly_table(df):
 # Trigger pipeline
 if generate:
     with st.spinner("Generating insights..."):
-        comparison_data, df = forecast_pipeline(selected_project)
+        comparison_data, df, forecast_df = forecast_pipeline(selected_project)
         final_summary = generate_report(comparison_data, df)
         st.subheader("📌 Forecasted Data")
         # Optional Visualization
-        forecasted_df = comparison_data[comparison_data['is_forecast'] == True]
-        st.dataframe(forecasted_df)
+        # forecasted_df = comparison_data[comparison_data['is_forecast'] == True]
+        st.dataframe(forecast_df)
 
         st.subheader("📌 Final Summary")
         # df = markdown_to_df(str(table))
