@@ -413,7 +413,7 @@ def forecast_pipeline(project_name):
                 ts = group.set_index('Period')[metric].dropna()
                 forecast = sarima_forecast(ts, steps)
                 for i, val in enumerate(forecast):
-                    forecast_rows.append({'PROJECT_NAME': project, 'Year': 2025, 'Quarter': i+1, metric: val})
+                    forecast_rows.append({'PROJECT_NAME': project, 'Year': 2025, 'Quarter': forecast_quarters[i], metric: val})
         return pd.DataFrame(forecast_rows).pivot_table(index=['PROJECT_NAME', 'Year', 'Quarter'], values=metrics, aggfunc='sum').reset_index()
 
     forecast_df = forecast_all(merged_df)
